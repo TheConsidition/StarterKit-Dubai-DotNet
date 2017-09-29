@@ -2,10 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Considition.RestApi.Helpers
 {
@@ -18,9 +14,9 @@ namespace Considition.RestApi.Helpers
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JObject jObject = JObject.Load(reader);
+            var jObject = JObject.Load(reader);
             Type type;
-            string objectiveType = (string)jObject["type"];
+            var objectiveType = (string)jObject["type"];
             switch (objectiveType)
             {
                 case "Error": type = typeof(ErrorApiResponse); break;

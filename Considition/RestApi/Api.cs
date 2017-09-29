@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RestSharp;
 using Newtonsoft.Json;
 using Considition.RestApi.Models.Response;
@@ -13,8 +10,8 @@ namespace Considition.RestApi
 {
     public class Api
     {
-        private const string DOMAIN = "http://localhost:59435";
-        private static RestClient _client = new RestClient(DOMAIN);
+        private const string Domain = "http://localhost:34083/";
+        private static readonly RestClient Client = new RestClient(Domain);
         
         public static bool Silent { get; set; }
 
@@ -22,23 +19,23 @@ namespace Considition.RestApi
         {
             if (!Silent)
             {
-                Console.WriteLine("API: " + message);
+                Console.WriteLine($"API: {message}");
             }
         }
 
         private static void HandleApiResponse(ApiResponse response)
         {
-            if (response is ErrorApiResponse)
+            if (response is ErrorApiResponse apiResponse)
             {
-                ErrorApiResponse error = (ErrorApiResponse)response;
-                string message = "An error occured: " + error.Message;
+                var error = apiResponse;
+                var message = "An error occured: " + error.Message;
                 Log(message);
                 throw new Exception(message);
             }
             else if (response is GameErrorApiResponse)
             {
-                GameErrorApiResponse error = (GameErrorApiResponse)response;
-                string message = "Your solution had an error: " + error.Error;
+                var error = (GameErrorApiResponse)response;
+                var message = $"Your solution had an error: {error.Error}";
                 Log(message);
                 throw new Exception(message);
             }
@@ -50,7 +47,7 @@ namespace Considition.RestApi
         /// <param name="apiKey">Your API key.</param>
         public static void SetApiKey(string apiKey)
         {
-            _client.AddDefaultParameter("apikey", apiKey, ParameterType.QueryString);
+            Client.AddDefaultParameter("apikey", apiKey, ParameterType.QueryString);
         }
 
         /// <summary>
@@ -60,13 +57,12 @@ namespace Considition.RestApi
         public static int InitGame()
         {
             var request = new RestRequest("considition/initgame", Method.GET);
-            var result = _client.Execute(request);
-            ApiResponse response = JsonConvert.DeserializeObject<ApiResponse>(
-                result.Content, new ApiResponseJsonConverter());
+            var result = Client.Execute(request);
+            var response = JsonConvert.DeserializeObject<ApiResponse>(result.Content, new ApiResponseJsonConverter());
             HandleApiResponse(response);
-            var gameResposne = (GameCreatedApiResponse)response;
-            Log("Created new game with ID " + gameResposne.GameId);
-            return gameResposne.GameId;
+            var gameResponse = (GameCreatedApiResponse)response;
+            Log($"Created new game with ID {gameResponse.GameId}");
+            return gameResponse.GameId;
         }
 
         /// <summary>
@@ -76,13 +72,11 @@ namespace Considition.RestApi
         public static GameState GetMyLastGame()
         {
             var request = new RestRequest("considition/getgame", Method.GET);
-            var result = _client.Execute(request);
-            var response = JsonConvert.DeserializeObject<ApiResponse>(
-                result.Content, new ApiResponseJsonConverter(),
-                new GameObjectiveJsonConverter());
+            var result = Client.Execute(request);
+            var response = JsonConvert.DeserializeObject<ApiResponse>(result.Content, new ApiResponseJsonConverter(), new GameObjectiveJsonConverter());
             HandleApiResponse(response);
             var gameResponse = (GetGameApiResponse)response;
-            Log("Retrieved game with ID " + gameResponse.GameState.Id);
+            Log($"Retrieved game with ID {gameResponse.GameState.Id}");
             return gameResponse.GameState;
         }
 
@@ -95,13 +89,11 @@ namespace Considition.RestApi
         {
             var request = new RestRequest("considition/getgame", Method.GET);
             request.AddQueryParameter("gameStateId", gameStateId.ToString());
-            var result = _client.Execute(request);
-            var response = JsonConvert.DeserializeObject<ApiResponse>(
-                result.Content, new ApiResponseJsonConverter(),
-                new GameObjectiveJsonConverter());
+            var result = Client.Execute(request);
+            var response = JsonConvert.DeserializeObject<ApiResponse>(result.Content, new ApiResponseJsonConverter(), new GameObjectiveJsonConverter());
             HandleApiResponse(response);
             var gameResponse = (GetGameApiResponse)response;
-            Log("Retrieved game with ID " + gameResponse.GameState.Id);
+            Log($"Retrieved game with ID {gameResponse.GameState.Id}");
             return gameResponse.GameState;
         }
 
@@ -116,12 +108,11 @@ namespace Considition.RestApi
             var request = new RestRequest("considition/submit", Method.POST);
             request.AddQueryParameter("gameStateId", gameStateId.ToString());
             request.AddJsonBody(solution);
-            var result = _client.Execute(request);
-            var response = JsonConvert.DeserializeObject<ApiResponse>(
-                result.Content, new ApiResponseJsonConverter());
+            var result = Client.Execute(request);
+            var response = JsonConvert.DeserializeObject<ApiResponse>(result.Content, new ApiResponseJsonConverter());
             HandleApiResponse(response);
             var gameResponse = (GameCompletedApiResponse)response;
-            Log("Your solution gave " + gameResponse.Points + " points.");
+            Log($"Your solution gave {gameResponse.Points} points.");
             return gameResponse.Points;
         }
     }

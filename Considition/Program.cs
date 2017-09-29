@@ -1,17 +1,13 @@
 ﻿using Considition.RestApi;
 using Considition.RestApi.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Considition
 {
-    class Program
+    public class Program
     {
         // TODO: Enter your API key
-        const string API_KEY = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
+        const string API_KEY = "eeb6c562-6324-4532-b36e-4d461ff000a9";
 
         static List<string> SolveGame(GameState game)
         {
@@ -25,18 +21,18 @@ namespace Considition
             // TODO: Implement your solution
 
             // Example solution
-            List<string> solution = new List<string>();
-            int x = game.Start.X;
-            int y = game.Start.Y;
-            while (x < game.End.X)
-            {
-                x++;
-                solution.Add("TRAVEL EAST");
-            }
+            var solution = new List<string>();
+            var x = game.Start.X;
+            var y = game.Start.Y;
             while (y < game.End.Y)
             {
                 y++;
                 solution.Add("TRAVEL SOUTH");
+            }
+            while (x < game.End.X)
+            {
+                x++;
+                solution.Add("TRAVEL EAST");
             }
 
             return solution;
@@ -46,8 +42,8 @@ namespace Considition
         {
             Api.SetApiKey(API_KEY);
             Api.InitGame();
-            GameState game = Api.GetMyLastGame();
-            List<string> solution = SolveGame(game);
+            var game = Api.GetMyLastGame();
+            var solution = SolveGame(game);
             Api.SubmitSolution(solution, game.Id);
         }
     }
