@@ -7,7 +7,7 @@ namespace Considition
     public class Program
     {
         // TODO: Enter your API key
-        const string API_KEY = "eeb6c562-6324-4532-b36e-4d461ff000a9";
+        const string API_KEY = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
 
         static List<string> SolveGame(GameState game)
         {
@@ -43,6 +43,8 @@ namespace Considition
             Api.SetApiKey(API_KEY);
             Api.InitGame();
             var game = Api.GetMyLastGame();
+            //Or get by gameId:
+            //var game = Api.GetGame(3005);
             var solution = SolveGame(game);
             Api.SubmitSolution(solution, game.Id);
         }

@@ -10,7 +10,7 @@ namespace Considition.RestApi
 {
     public class Api
     {
-        private const string Domain = "http://localhost:34083/";
+        private const string Domain = "http://theconsidition.se/";
         private static readonly RestClient Client = new RestClient(Domain);
         
         public static bool Silent { get; set; }
