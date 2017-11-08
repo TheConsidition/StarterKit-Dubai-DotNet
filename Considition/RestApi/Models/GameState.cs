@@ -18,6 +18,12 @@ namespace Considition.RestApi.Models
         [JsonProperty("objectives")]
         public List<GameObjective> Objectives { get; set; }
 
+        [JsonProperty("timeLimit")]
+        public int TimeLimit { get; set; }
+
+        [JsonProperty("pollutionsPointRate")]
+        public double PollutionsPointRate { get; set; }
+
         [JsonProperty("start")]
         public Location Start { get; set; }
 
